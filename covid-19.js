@@ -1,7 +1,7 @@
 var request = require("request");
 //var url = 'https://pomber.github.io/covid19/timeseries.json';
 
-var brain = require('./brain-browser.js');
+var brain = require('./vendor/brainjs/brain-browser.js');
 var fs = require('fs');
 var moment = require('moment');
 
@@ -12,7 +12,8 @@ var country = 'South Africa';
 var ignoreSaves = false;
 var amountOfDays = 14;
 
-var covidDataSet = JSON.parse(fs.readFileSync('./timeseries.json'));
+var jsData = fs.readFileSync('./json/data.js', 'utf8');
+var covidDataSet = JSON.parse(jsData.split('Web.Data = ').join(''));
 for (var prop in covidDataSet) {
     var lastVals = {};
     covidDataSet[prop].forEach(dateItem => {
@@ -112,9 +113,9 @@ const netConfirmed = new brain.recurrent.LSTMTimeStep(neuralOpts);
 const netDeaths = new brain.recurrent.LSTMTimeStep(neuralOpts);
 const netRecovered = new brain.recurrent.LSTMTimeStep(neuralOpts);
 
-if ((fs.existsSync('./covid-19-confirmed.json')) && (!ignoreSaves)) {
+if ((fs.existsSync('./json/covid-19-confirmed.json')) && (!ignoreSaves)) {
     console.log('Loading confirmed training object....');
-    var fileData = fs.readFileSync('./covid-19-confirmed.json', 'utf8');
+    var fileData = fs.readFileSync('./json/covid-19-confirmed.json', 'utf8');
     netConfirmed.fromJSON(JSON.parse(fileData));
     console.log('Confirmed Training Loaded.');
 } else {
@@ -122,12 +123,12 @@ if ((fs.existsSync('./covid-19-confirmed.json')) && (!ignoreSaves)) {
     netConfirmed.train([trainConfirmedData], trainingOpts);
     console.log('Training confirmed data finished ' + moment().format('YYYY-MM-DD HH:mm:ss.SSS'));
     var jsonObj = JSON.stringify(netConfirmed.toJSON());
-    fs.writeFileSync('./covid-19-confirmed.json', jsonObj, 'utf8');
+    fs.writeFileSync('./json/covid-19-confirmed.json', jsonObj, 'utf8');
 }
 
-if ((fs.existsSync('./covid-19-deaths.json')) && (!ignoreSaves)) {
+if ((fs.existsSync('./json/covid-19-deaths.json')) && (!ignoreSaves)) {
     console.log('Loading deaths training object....');
-    var fileData = fs.readFileSync('./covid-19-deaths.json', 'utf8');
+    var fileData = fs.readFileSync('./json/covid-19-deaths.json', 'utf8');
     netDeaths.fromJSON(JSON.parse(fileData));
     console.log('Deaths Training Loaded.');
 } else {
@@ -135,12 +136,12 @@ if ((fs.existsSync('./covid-19-deaths.json')) && (!ignoreSaves)) {
     netDeaths.train([trainDeathsData], trainingOpts);
     console.log('Training deaths data finished ' + moment().format('YYYY-MM-DD HH:mm:ss.SSS'));
     var jsonObj = JSON.stringify(netDeaths.toJSON());
-    fs.writeFileSync('./covid-19-deaths.json', jsonObj, 'utf8');
+    fs.writeFileSync('./json/covid-19-deaths.json', jsonObj, 'utf8');
 }
 
-if ((fs.existsSync('./covid-19-recovered.json')) && (!ignoreSaves)) {
+if ((fs.existsSync('./json/covid-19-recovered.json')) && (!ignoreSaves)) {
     console.log('Loading recovered training object....');
-    var fileData = fs.readFileSync('./covid-19-recovered.json', 'utf8');
+    var fileData = fs.readFileSync('./json/covid-19-recovered.json', 'utf8');
     netRecovered.fromJSON(JSON.parse(fileData));
     console.log('Recovered Training Loaded.');
 } else {
@@ -148,7 +149,7 @@ if ((fs.existsSync('./covid-19-recovered.json')) && (!ignoreSaves)) {
     netRecovered.train([trainRecoveredData], trainingOpts);
     console.log('Training recovered data finished ' + moment().format('YYYY-MM-DD HH:mm:ss.SSS'));
     var jsonObj = JSON.stringify(netRecovered.toJSON());
-    fs.writeFileSync('./covid-19-recovered.json', jsonObj, 'utf8');
+    fs.writeFileSync('./json/covid-19-recovered.json', jsonObj, 'utf8');
 }
 
 var forecastConfirmed = netConfirmed.forecast(trainConfirmedData, amountOfDays);
