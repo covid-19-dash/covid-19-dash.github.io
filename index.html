@@ -12,13 +12,13 @@
     <title>Covid-19 Dashboard</title>
 
     <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css?version=1.0.1" rel="stylesheet" type="text/css">
+    <link href="vendor/fontawesome-free/css/all.min.css?version=1.0.2" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.css?version=1.0.1" rel="stylesheet">
+    <link href="css/sb-admin-2.css?version=1.0.2" rel="stylesheet">
 
 </head>
 
@@ -38,8 +38,11 @@
                 <div class="sidebar-brand-text mx-3">Covid-19</div>
             </a>
 
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
+            <div class="input-group" style="margin-left: 10px; width: 90%">
+                <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+                    aria-label="Search" aria-describedby="basic-addon2"
+                    v-model="SearchCountry">
+            </div>
 
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -50,8 +53,7 @@
             </div>
 
             <!-- Nav Item - Charts -->
-            <li class="nav-item" v-for="country in PerCountry" style="cursor: pointer"
-                v-on:click="setCountry(country)">
+            <li class="nav-item" v-for="country in filteredCountries" style="cursor: pointer" v-on:click="setCountry(country)">
                 <span class="nav-link">
                     <i class="fas fa-fw fa-chart-area"></i>
                     <span>{{country.Country}}&nbsp;({{country.Confirmed}})</span>
@@ -92,7 +94,8 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                 Confirmed</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{Selected.Confirmed}}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{Selected.Confirmed}}
+                                            </div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-user-check fa-2x text-gray-300"></i>
@@ -109,7 +112,8 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                                 Deaths</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{Selected.Deaths}}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{Selected.Deaths}}
+                                            </div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-sad-tear fa-2x text-gray-300"></i>
@@ -126,11 +130,27 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                 Recovered</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{Selected.Recovered}}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{Selected.Recovered}}
+                                            </div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-smile fa-2x text-gray-300"></i>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-12 col-lg-12">
+                            <div class="card shadow mb-4">
+                                <!-- Card Header - Dropdown -->
+                                <div
+                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Confirmed</h6>
+                                </div>
+                                <!-- Card Body -->
+                                <div class="card-body">
+                                    <div id="confirmedChart" class="chart-area">
                                     </div>
                                 </div>
                             </div>
@@ -165,21 +185,29 @@
     </a>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js?version=1.0.1"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js?version=1.0.1"></script>
+    <script src="vendor/jquery/jquery.min.js?version=1.0.2"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js?version=1.0.2"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js?version=1.0.1"></script>
+    <script src="vendor/jquery-easing/jquery.easing.min.js?version=1.0.2"></script>
 
-    <script src="vendor/vue/vue.js?version=1.0.1"></script>
+    <script src="vendor/vue/vue.js?version=1.0.2"></script>
+
+    <script src="vendor/brainjs/brain-browser.js"></script>
+
+    <script src="vendor/moment/moment.min.js"></script>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="js/app.js?version=1.0.1"></script>
-    <script src="json/data.js?version=1.0.1"></script>
-    <script src="js/sb-admin-2.js?version=1.0.1"></script>
-
-    <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js?version=1.0.1"></script>
+    <script src="js/app.js?version=1.0.2"></script>
+    <script src="json/data.js?version=1.0.2"></script>
+    <script src="json/predictData.js?version=1.0.2"></script>
+    <script>Web.VueData.Learned = {};</script>
+    <script src="json/covid-19-confirmed.js?version=1.0.2"></script>
+    <script src="json/covid-19-deaths.js?version=1.0.2"></script>
+    <script src="json/covid-19-recovered.js?version=1.0.2"></script>
+    <script src="js/sb-admin-2.js?version=1.0.2"></script>
 
 </body>
 
